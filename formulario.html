@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{{ title }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="agendamentoForm">
+                    {{ form.hidden_tag() }}
+
+                    {% for field in form if field.widget.input_type != 'hidden' and field.name != 'submit' %}
+                        <div class="mb-3">
+                            {{ field.label(class="form-label") }}
+                            {% if field.errors %}
+                                {{ field(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in field.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ field(class="form-control") }}
+                            {% endif %}
+                            {% if field.description %}
+                                <small class="form-text text-muted">{{ field.description }}</small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary") }}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função para atualizar horários quando a data mudar
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateField = document.querySelector('#date');
+        const timeField = document.querySelector('#time');
+
+        if (dateField && timeField) {
+            dateField.addEventListener('change', function() {
+                const selectedDate = this.value;
+                if (selectedDate) {
+                    fetch(`/get-horarios?data=${selectedDate}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Limpar opções atuais
+                            timeField.innerHTML = '';
+                            // Adicionar nova opção padrão
+                            const defaultOption = document.createElement('option');
+                            defaultOption.value = '';
+                            defaultOption.textContent = 'Selecione um horário';
+                            timeField.appendChild(defaultOption);
+                            // Adicionar horários
+                            data.horarios.forEach(horario => {
+                                const option = document.createElement('option');
+                                option.value = horario;
+                                option.textContent = horario;
+                                timeField.appendChild(option);
+                            });
+                        });
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block conteudo %}
+<h1>{{ titulo }}</h1>
+
+{% if modo == 'veterinarios' %}
+  <div class="lista-cards">
+    {% for vet in vets %}
+      <div class="card">
+        <h2>{{ vet.name }}</h2>
+        <p><strong>Especialidade:</strong> {{ vet.specialty or 'Clínica geral' }}</p>
+        <p><strong>CRMV:</strong> {{ vet.crmv or 'não informado' }}</p>
+      </div>
+    {% endfor %}
+  </div>
+
+{% elif modo == 'loja' %}
+  <div class="lista-cards">
+    {% for p in produtos %}
+      <div class="card">
+        <h2>{{ p.name }}</h2>
+        <p>{{ p.description }}</p>
+        <p><strong>R$ {{ '%.2f'|format(p.price) }}</strong></p>
+        <p>Estoque: {{ p.stock }}</p>
+        <form method="post" action="{{ url_for('reservar_produto', produto_id=p.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn" type="submit" {% if p.stock <= 0 %}disabled{% endif %}>Reservar</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+
+{% elif modo == 'historico' %}
+  <section class="card">
+    <h2>Consultas</h2>
+    {% if consultas %}
+      <table><thead><tr><th>Data</th><th>Pet</th><th>Veterinário</th><th>Status</th><th>Ações</th></tr></thead><tbody>
+      {% for c in consultas %}
+        <tr><td>{{ c.date.strftime('%d/%m/%Y') }} {{ c.time.strftime('%H:%M') }}</td><td>{{ c.pet.name }}</td><td>{{ c.veterinarian.name }}</td><td>{{ c.status }}</td><td><a class="btn sec small" target="_blank" href="{{ google_event_url(c) }}">Google Agenda</a> <a class="btn small" href="{{ url_for('editar_consulta', consulta_id=c.id) }}">Editar</a></td></tr>
+      {% endfor %}
+      </tbody></table>
+    {% else %}<p class="muted">Sem consultas.</p>{% endif %}
+  </section>
+  <section class="card">
+    <h2>Banho e tosa</h2>
+    {% if banhos %}
+      <table><thead><tr><th>Data</th><th>Pet</th><th>Serviço</th><th>Status</th><th>Ações</th></tr></thead><tbody>
+      {% for b in banhos %}<tr><td>{{ b.date.strftime('%d/%m/%Y') }} {{ b.time.strftime('%H:%M') }}</td><td>{{ b.pet.name }}</td><td>{{ b.service }}</td><td>{{ b.status }}</td><td><a class="btn sec small" target="_blank" href="{{ google_event_url(b, 'banho') }}">Google Agenda</a> <a class="btn small" href="{{ url_for('editar_banho_tosa', banho_id=b.id) }}">Editar</a></td></tr>{% endfor %}
+      </tbody></table>
+    {% else %}<p class="muted">Sem reservas.</p>{% endif %}
+  </section>
+  <section class="card">
+    <h2>Produtos reservados</h2>
+    {% if reservas %}
+      <table><thead><tr><th>Produto</th><th>Quantidade</th><th>Status</th></tr></thead><tbody>
+      {% for r in reservas %}<tr><td>{{ r.product.name }}</td><td>{{ r.quantity }}</td><td>{{ r.status }}</td></tr>{% endfor %}
+      </tbody></table>
+    {% else %}<p class="muted">Sem produtos reservados.</p>{% endif %}
+  </section>
+
+{% elif modo == 'admin' %}
+  <section class="card">
+    <h2>Usuários cadastrados</h2>
+    <table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th></tr></thead><tbody>
+    {% for u in usuarios %}<tr><td>{{ u.name }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td></tr>{% endfor %}
+    </tbody></table>
+  </section>
+  <section class="card">
+    <h2>Consultas do sistema</h2>
+    <table><thead><tr><th>Data</th><th>Tutor</th><th>Pet</th><th>Veterinário</th></tr></thead><tbody>
+    {% for c in consultas %}<tr><td>{{ c.date.strftime('%d/%m/%Y') }} {{ c.time.strftime('%H:%M') }}</td><td>{{ c.client.name }}</td><td>{{ c.pet.name }}</td><td>{{ c.veterinarian.name }}</td></tr>{% endfor %}
+    </tbody></table>
+  </section>
+{% endif %}
+{% endblock %}

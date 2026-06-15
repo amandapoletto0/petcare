@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Início{% endblock %}
+
+{% block content %}
+<div class="row align-items-center min-vh-75">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold text-primary">Bem-vindo ao PetCare+</h1>
+        <p class="lead">O sistema completo para cuidar do seu pet com amor e profissionalismo.</p>
+        <hr class="my-4">
+        <p>✓ Agendamento de consultas veterinárias</p>
+        <p>✓ Serviços de banho e tosa</p>
+        <p>✓ Prontuário digital e histórico completo</p>
+        <p>✓ Agendamento direto no Google Calendar</p>
+        {% if not current_user.is_authenticated %}
+            <div class="mt-4">
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-2">Cadastrar Agora</a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">Já tenho conta</a>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-lg-6 text-center">
+        <i class="bi bi-heart-pulse-fill" style="font-size: 15rem; color: #20B2AA;"></i>
+    </div>
+</div>
+
+<div class="row mt-5 text-center">
+    <div class="col-md-4">
+        <div class="card p-3">
+            <i class="bi bi-calendar-check" style="font-size: 3rem; color: #20B2AA;"></i>
+            <h5 class="mt-3">Agendamento Fácil</h5>
+            <p>Agende consultas e serviços de forma rápida e simples</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3">
+            <i class="bi bi-file-text" style="font-size: 3rem; color: #20B2AA;"></i>
+            <h5 class="mt-3">Prontuário Digital</h5>
+            <p>Histórico completo de saúde do seu pet</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3">
+            <i class="bi bi-shield-lock" style="font-size: 3rem; color: #20B2AA;"></i>
+            <h5 class="mt-3">Segurança</h5>
+            <p>Seus dados protegidos com as melhores práticas</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

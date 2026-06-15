@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Loja{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">🛒 Nossa Loja</h2>
+
+<div class="row">
+    {% for product in products %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.description }}</p>
+                <h6 class="text-primary">R$ {{ "%.2f"|format(product.price) }}</h6>
+                <p class="text-muted">Estoque: {{ product.stock }} unidades</p>
+                <form method="POST" action="{{ url_for('reserve_product', product_id=product.id) }}">
+                    <div class="input-group">
+                        <input type="number" name="quantity" class="form-control" value="1" min="1" max="{{ product.stock }}">
+                        <button type="submit" class="btn btn-primary">Reservar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="mt-4">
+    <a href="{{ url_for('my_reservations') }}" class="btn btn-secondary">Ver Minhas Reservas</a>
+</div>
+{% endblock %}

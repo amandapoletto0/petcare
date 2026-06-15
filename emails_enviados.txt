@@ -1,0 +1,36 @@
+
+======================================================================
+Data do registro: 14/06/2026 12:52
+Para: lucas.vet@petcare.com
+Assunto: PetCare+ - Nova consulta agendada
+
+Olá, Dr. Lucas Pereira.
+
+Você foi vinculado(a) a uma consulta veterinária no PetCare+.
+
+Tutor: Amanda Poletto
+Pet: nego
+Data: 18/06/2026
+Horário: 18:00
+Motivo: dor
+Status: agendada
+
+Acesse sua área no PetCare+ para visualizar somente os seus atendimentos agendados.
+
+======================================================================
+Data do registro: 14/06/2026 12:52
+Para: lucas.vet@petcare.com
+Assunto: PetCare+ - Consulta atualizada
+
+Olá, Dr. Lucas Pereira.
+
+Você foi vinculado(a) a uma consulta veterinária no PetCare+.
+
+Tutor: Amanda Poletto
+Pet: nego
+Data: 18/06/2026
+Horário: 18:00
+Motivo: dor
+Status: agendada
+
+Acesse sua área no PetCare+ para visualizar somente os seus atendimentos agendados.

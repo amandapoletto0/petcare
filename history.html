@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Histórico{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Histórico Completo</h2>
+
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#consultas">Consultas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#banhos">Banho e Tosa</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="consultas">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Pet</th>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Tipo</th>
+                        <th>Veterinário</th>
+                        <th>Status</th>
+                        <th>Prontuário</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in appointments %}
+                    <tr>
+                        <td>{{ app.pet.name }}</td>
+                        <td>{{ app.date.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ app.time }}</td>
+                        <td>{{ app.type|capitalize }}</td>
+                        <td>{{ app.veterinario.name }}</td>
+                        <td>
+                            <span class="badge {% if app.status == 'realizado' %}bg-success{% elif app.status == 'cancelado' %}bg-danger{% else %}bg-warning{% endif %}">
+                                {{ app.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if app.medical_record %}
+                                <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modal{{ app.id }}">
+                                    <i class="bi bi-eye"></i> Ver
+                                </button>
+                                <div class="modal fade" id="modal{{ app.id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5>Prontuário - {{ app.pet.name }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <pre style="white-space: pre-wrap;">{{ app.medical_record }}</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="banhos">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Pet</th>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Serviço</th>
+                        <th>Profissional</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for groom in groomings %}
+                    <tr>
+                        <td>{{ groom.pet.name }}</td>
+                        <td>{{ groom.date.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ groom.time }}</td>
+                        <td>{{ groom.service_type }}</td>
+                        <td>{{ groom.groomer.name }}</td>
+                        <td>
+                            <span class="badge {% if groom.status == 'realizado' %}bg-success{% elif groom.status == 'cancelado' %}bg-danger{% else %}bg-warning{% endif %}">
+                                {{ groom.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

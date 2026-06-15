@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Meus Pets{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-paw"></i> Meus Pets</h2>
+    <a href="{{ url_for('add_pet') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Novo Pet
+    </a>
+</div>
+
+{% if pets %}
+<div class="row">
+    {% for pet in pets %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <i class="bi bi-heart-fill" style="font-size: 3rem; color: #20B2AA;"></i>
+                </div>
+                <h5 class="card-title text-center">{{ pet.name }}</h5>
+                <hr>
+                <p class="card-text">
+                    <strong><i class="bi bi-info-circle"></i> Espécie:</strong> {{ pet.species }}<br>
+                    <strong><i class="bi bi-tag"></i> Raça:</strong> {{ pet.breed or 'Não informada' }}<br>
+                    <strong><i class="bi bi-calendar"></i> Idade:</strong> {{ pet.age or '?' }} anos<br>
+                    <strong><i class="bi bi-graph-up"></i> Peso:</strong> {{ pet.weight or '?' }} kg
+                </p>
+            </div>
+            <div class="card-footer bg-transparent text-center">
+                <div class="btn-group" role="group">
+                    <a href="{{ url_for('view_pet', pet_id=pet.id) }}" class="btn btn-sm btn-info">
+                        <i class="bi bi-eye"></i> Ver Histórico
+                    </a>
+                    <a href="{{ url_for('edit_pet', pet_id=pet.id) }}" class="btn btn-sm btn-warning">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="{{ url_for('delete_pet', pet_id=pet.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja remover {{ pet.name }}?')">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info text-center">
+    <i class="bi bi-info-circle"></i> Você ainda não tem pets cadastrados.
+    <br><br>
+    <a href="{{ url_for('add_pet') }}" class="btn btn-primary">Cadastrar Primeiro Pet</a>
+</div>
+{% endif %}
+{% endblock %}

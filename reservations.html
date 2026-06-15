@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Minhas Reservas{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Minhas Reservas</h2>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Data da Reserva</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for res in reservations %}
+            <tr>
+                <td>{{ res.product.name }}</td>
+                <td>{{ res.quantity }}</td>
+                <td>{{ res.reservation_date.strftime('%d/%m/%Y') }}</td>
+                <td><span class="badge bg-success">{{ res.status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<a href="{{ url_for('shop') }}" class="btn btn-primary">Continuar Comprando</a>
+{% endblock %}

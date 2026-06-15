@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pet.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4>{{ pet.name }}</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Espécie:</strong> {{ pet.species }}</p>
+                <p><strong>Raça:</strong> {{ pet.breed or 'Não informada' }}</p>
+                <p><strong>Idade:</strong> {{ pet.age or '?' }} anos</p>
+                <p><strong>Peso:</strong> {{ pet.weight or '?' }} kg</p>
+                <p><strong>Tutor:</strong> {{ pet.owner.name }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4>Histórico de Consultas</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Veterinário</th>
+                                <th>Prontuário</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in appointments %}
+                            <tr>
+                                <td>{{ app.date.strftime('%d/%m/%Y') }} às {{ app.time }}</td>
+                                <td>{{ app.veterinario.name }}</td>
+                                <td>
+                                    {% if app.medical_record %}
+                                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modal{{ app.id }}">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </button>
+                                        <div class="modal fade" id="modal{{ app.id }}" tabindex="-1">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5>Prontuário - {{ app.pet.name }}</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <pre style="white-space: pre-wrap;">{{ app.medical_record }}</pre>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

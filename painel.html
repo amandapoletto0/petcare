@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Painel{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Meu Painel</h2>
+
+<h3 class="mb-3">Próximos Agendamentos</h3>
+
+{% if appointments or groomings %}
+    {% if appointments %}
+    <h4>Consultas</h4>
+    <div class="row mb-4">
+        {% for app in appointments %}
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="card-title">{{ app.pet.name }}</h5>
+                        <span class="badge bg-info">{{ app.status }}</span>
+                    </div>
+                    <p class="card-text">
+                        <i class="bi bi-calendar"></i> {{ app.date.strftime('%d/%m/%Y') }}<br>
+                        <i class="bi bi-clock"></i> {{ app.time }} ({{ app.duration }}min)<br>
+                        <i class="bi bi-person"></i> {{ app.veterinario.name }}<br>
+                        <i class="bi bi-file-text"></i> {{ app.type|capitalize }}
+                        {% if app.reason %}<br><i class="bi bi-chat"></i> {{ app.reason }}{% endif %}
+                    </p>
+                    <div class="btn-group">
+                        <a href="{{ url_for('add_to_calendar', type='appointment', item_id=app.id) }}" class="btn btn-sm btn-success">
+                            <i class="bi bi-google"></i> Google Agenda
+                        </a>
+                        {% if current_user.role == 'admin' or current_user.role == 'tutor' %}
+                            <a href="{{ url_for('edit_appointment', appointment_id=app.id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <a href="{{ url_for('cancel_appointment', appointment_id=app.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Cancelar consulta?')">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        {% endif %}
+                        {% if current_user.role == 'veterinario' and app.status == 'agendado' %}
+                            <a href="{{ url_for('medical_record', appointment_id=app.id) }}" class="btn btn-sm btn-info">
+                                <i class="bi bi-file-medical"></i> Prontuário
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if groomings %}
+    <h4>Banho e Tosa</h4>
+    <div class="row">
+        {% for groom in groomings %}
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="card-title">{{ groom.pet.name }}</h5>
+                        <span class="badge bg-info">{{ groom.status }}</span>
+                    </div>
+                    <p class="card-text">
+                        <i class="bi bi-calendar"></i> {{ groom.date.strftime('%d/%m/%Y') }}<br>
+                        <i class="bi bi-clock"></i> {{ groom.time }} ({{ groom.duration }}min)<br>
+                        <i class="bi bi-person"></i> {{ groom.groomer.name }}<br>
+                        <i class="bi bi-scissors"></i> {{ groom.service_type }}
+                        {% if groom.notes %}<br><i class="bi bi-chat"></i> {{ groom.notes }}{% endif %}
+                    </p>
+                    <div class="btn-group">
+                        <a href="{{ url_for('add_to_calendar', type='grooming', item_id=groom.id) }}" class="btn btn-sm btn-success">
+                            <i class="bi bi-google"></i> Google Agenda
+                        </a>
+                        {% if current_user.role == 'admin' or current_user.role == 'tutor' %}
+                            <a href="{{ url_for('edit_grooming', grooming_id=groom.id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <a href="{{ url_for('cancel_grooming', grooming_id=groom.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Cancelar serviço?')">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info">Nenhum agendamento futuro encontrado.</div>
+    {% if current_user.role == 'tutor' %}
+        <a href="{{ url_for('new_appointment') }}" class="btn btn-primary">Agendar Consulta</a>
+        <a href="{{ url_for('new_grooming') }}" class="btn btn-secondary">Agendar Banho/Tosa</a>
+    {% endif %}
+{% endif %}
+
+{% if past_appointments %}
+<h3 class="mb-3 mt-4">Últimas Consultas Realizadas</h3>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Pet</th>
+                <th>Data</th>
+                <th>Veterinário</th>
+                <th>Prontuário</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in past_appointments %}
+            <tr>
+                <td>{{ app.pet.name }}</td>
+                <td>{{ app.date.strftime('%d/%m/%Y') }}</td>
+                <td>{{ app.veterinario.name }}</td>
+                <td>
+                    {% if app.medical_record %}
+                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#modal{{ app.id }}">
+                            <i class="bi bi-eye"></i> Ver
+                        </button>
+                        <div class="modal fade" id="modal{{ app.id }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5>Prontuário - {{ app.pet.name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <pre style="white-space: pre-wrap;">{{ app.medical_record }}</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
